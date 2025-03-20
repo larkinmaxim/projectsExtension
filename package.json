@@ -1,0 +1,23 @@
+{
+  "name": "side-panel-extension",
+  "version": "1.0.0",
+  "description": "Chrome extension with sliding side panel",
+  "main": "background.js",
+  "scripts": {
+    "generate-icons": "node generate-icons.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chrome",
+    "extension",
+    "side",
+    "panel",
+    "shortcut"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "canvas": "^2.11.0"
+  },
+  "devDependencies": {}
+}

@@ -1,0 +1,98 @@
+/* Sliding Panel Styles */
+.sliding-panel {
+  position: fixed;
+  top: 0;
+  right: -500px; /* Start off-screen */
+  width: 500px;
+  height: 100vh;
+  background-color: #1a1a1a;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  transition: right 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+}
+
+/* Visible state */
+.sliding-panel.visible {
+  right: 0;
+}
+
+/* Panel header */
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #1a1a1a;
+  color: white;
+  border-bottom: 1px solid #404040;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+/* Close button */
+.panel-close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 1;
+}
+
+.panel-close-btn:hover {
+  opacity: 0.8;
+}
+
+/* Panel content area */
+.panel-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+/* Resize handle */
+.panel-resize-handle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  cursor: ew-resize;
+  background-color: transparent;
+}
+
+.panel-resize-handle.dragging {
+  background-color: #4285f4;
+}
+
+/* Panel footer */
+.panel-footer {
+  padding: 10px;
+  background-color: #2d2d2d;
+  border-top: 1px solid #404040;
+  color: #e0e0e0;
+  font-size: 10px;
+  text-align: center;
+}
+
+.panel-footer p {
+  margin: 2px 0;
+  text-align: center;
+}
+
+.panel-footer a {
+  color: #4285f4;
+  text-decoration: none;
+}
+
+.panel-footer a:hover {
+  text-decoration: underline;
+}

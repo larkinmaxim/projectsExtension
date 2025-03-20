@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Panel Test Page</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+  <link rel="stylesheet" href="panel.css">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    h1 {
+      color: #333;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+    }
+    
+    button {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 20px 0;
+    }
+    
+    button:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="max-w-3xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 border-b-2 border-gray-200 pb-3 mb-6">Side Panel Test Page</h1>
+    
+    <p class="text-lg mb-6">This is a test page to demonstrate the sliding panel functionality. Click the button below to toggle the panel.</p>
+    
+    <button id="togglePanelBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md transition-colors">Toggle Panel</button>
+    
+    <div class="bg-white rounded-lg shadow-md p-6 mt-8">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">About This Test</h2>
+      <p class="mb-3">This page includes the necessary CSS and JavaScript to demonstrate how the sliding panel works without needing to load it as a Chrome extension.</p>
+      <p>In a real extension environment, the panel would be injected into any webpage you visit.</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6 mt-8">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Features Demonstrated</h2>
+      <ul class="list-disc pl-5 space-y-2">
+        <li>Panel sliding animation</li>
+        <li>Resizable panel width</li>
+        <li>Header with title and close button</li>
+        <li>Clean, minimal footer</li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- Include a simplified version of the content script -->
+  <script>
+    // This creates and manages the sidebar panel
+    let sidePanel = null;
+    let isOpen = false;
+
+    function createSidePanel() {
+      if (sidePanel) return;
+      
+      // Create the main panel container
+      sidePanel = document.createElement('div');
+      sidePanel.className = 'sliding-panel';
+      
+      // Create resize handle
+      const resizeHandle = document.createElement('div');
+      resizeHandle.className = 'panel-resize-handle';
+      sidePanel.appendChild(resizeHandle);
+      
+      // Create header with title and close button
+      const header = document.createElement('div');
+      header.className = 'panel-header';
+      
+      const title = document.createElement('h3');
+      title.textContent = 'ShortCut';
+      
+      const closeBtn = document.createElement('button');
+      closeBtn.innerHTML = '&times;';
+      closeBtn.className = 'panel-close-btn';
+      closeBtn.addEventListener('click', togglePanel);
+      
+      header.appendChild(title);
+      header.appendChild(closeBtn);
+      
+      // Create content container (empty but maintains structure)
+      const content = document.createElement('div');
+      content.className = 'panel-content';
+      
+      // Create footer
+      const footer = document.createElement('div');
+      footer.className = 'panel-footer';
+      footer.innerHTML = `
+        <p>Found a bug? Feature request? Feedback form</p>
+        <p> Made with ❤️ by larmax </p>
+      `;
+      
+      // Assemble the panel
+      sidePanel.appendChild(header);
+      sidePanel.appendChild(content);
+      sidePanel.appendChild(footer);
+      
+      // Add to the document
+      document.body.appendChild(sidePanel);
+      
+      // Add resize functionality
+      let startX, startWidth;
+      
+      function startResize(e) {
+        startX = e.clientX;
+        startWidth = parseInt(window.getComputedStyle(sidePanel).width, 10);
+        resizeHandle.classList.add('dragging');
+        document.addEventListener('mousemove', resize);
+        document.addEventListener('mouseup', stopResize);
+        e.preventDefault();
+      }
+      
+      function resize(e) {
+        if (sidePanel) {
+          const width = startWidth - (e.clientX - startX);
+          if (width >= 250 && width <= 1200) {
+            sidePanel.style.width = width + 'px';
+          }
+        }
+      }
+      
+      function stopResize() {
+        resizeHandle.classList.remove('dragging');
+        document.removeEventListener('mousemove', resize);
+        document.removeEventListener('mouseup', stopResize);
+      }
+      
+      resizeHandle.addEventListener('mousedown', startResize);
+      
+      // Force layout calculation before starting animation
+      setTimeout(() => {
+        sidePanel.classList.add('visible');
+      }, 10);
+    }
+
+    function togglePanel() {
+      if (!sidePanel) {
+        createSidePanel();
+        isOpen = true;
+        return;
+      }
+      
+      if (isOpen) {
+        sidePanel.classList.remove('visible');
+        isOpen = false;
+        
+        // Wait for animation to complete before removing
+        setTimeout(() => {
+          if (!isOpen && sidePanel && sidePanel.parentNode) {
+            sidePanel.parentNode.removeChild(sidePanel);
+            sidePanel = null;
+          }
+        }, 300); // Match transition duration
+      } else {
+        createSidePanel();
+        isOpen = true;
+      }
+    }
+
+    // Add event listener to the toggle button
+    document.getElementById('togglePanelBtn').addEventListener('click', togglePanel);
+  </script>
+</body>
+</html>

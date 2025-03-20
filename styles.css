@@ -1,0 +1,177 @@
+/*
+  The CSS for the sliding panel
+*/
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+.extension-side-panel {
+  position: fixed;
+  top: 0;
+  right: -800px; /* Start off screen */
+  width: 800px;
+  min-width: 250px;
+  max-width: 1200px; /* Increased from 800px to allow wider panel */
+  height: 100vh;
+  background-color: #1e1e1e;
+  color: #e1e1e1;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 9999999;
+  transition: right 0.3s ease;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  resize: horizontal;
+}
+
+.panel-resize-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 100%;
+  cursor: ew-resize;
+  background-color: transparent;
+  z-index: 10000000;
+}
+
+.panel-resize-handle:hover,
+.panel-resize-handle.dragging {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.extension-side-panel.open {
+  right: 0;
+}
+
+.panel-header {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #2d2d2d;
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.panel-close-btn {
+  background: none;
+  border: none;
+  color: #e1e1e1;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 8px;
+  line-height: 1;
+}
+
+.url-input-section {
+  padding: 16px;
+  border-bottom: 1px solid #2d2d2d;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.url-input {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #333;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.input-actions {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+}
+
+.action-btn .material-icons {
+  font-size: 18px;
+}
+
+.section {
+  padding: 16px;
+  border-bottom: 1px solid #2d2d2d;
+}
+
+.section h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.shortcuts-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.shortcut-item {
+  background-color: #333;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.add-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.recent-sites {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.site-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.site-item:hover {
+  background-color: #333;
+}
+
+.site-item img {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.panel-footer {
+  margin-top: auto;
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+  border-top: 1px solid #2d2d2d;
+}
+
+.panel-footer p {
+  margin: 4px 0;
+}
