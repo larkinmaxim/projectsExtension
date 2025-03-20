@@ -1,6 +1,8 @@
 // This creates and manages the sidebar panel
 let sidePanel = null;
 let isOpen = false;
+let isFullscreen = false;
+let previousWidth = null; // Store previous width for restoring from fullscreen
 
 function createSidePanel() {
   if (sidePanel) return;
@@ -14,19 +16,25 @@ function createSidePanel() {
   resizeHandle.className = 'panel-resize-handle';
   sidePanel.appendChild(resizeHandle);
   
-  // Create header with title and close button
+  // Create header with title and buttons
   const header = document.createElement('div');
   header.className = 'panel-header';
   
   const title = document.createElement('h3');
   title.textContent = 'ShortCut';
   
+  const toggleFullscreenBtn = document.createElement('button');
+  toggleFullscreenBtn.innerHTML = '<i class="material-icons">fullscreen</i>';
+  toggleFullscreenBtn.className = 'panel-toggle-btn';
+  toggleFullscreenBtn.addEventListener('click', toggleFullscreen);
+
   const closeBtn = document.createElement('button');
   closeBtn.innerHTML = '&times;';
   closeBtn.className = 'panel-close-btn';
   closeBtn.addEventListener('click', togglePanel);
   
   header.appendChild(title);
+  header.appendChild(toggleFullscreenBtn);
   header.appendChild(closeBtn);
   
   // Create content container (empty but maintains structure)
@@ -53,6 +61,7 @@ function createSidePanel() {
   let startX, startWidth;
   
   function startResize(e) {
+    if (isFullscreen) return; // Disable resize in fullscreen mode
     startX = e.clientX;
     startWidth = parseInt(window.getComputedStyle(sidePanel).width, 10);
     resizeHandle.classList.add('dragging');
@@ -62,7 +71,7 @@ function createSidePanel() {
   }
   
   function resize(e) {
-    if (sidePanel) {
+    if (sidePanel && !isFullscreen) {
       const width = startWidth - (e.clientX - startX);
       if (width >= 250 && width <= 1200) {
         sidePanel.style.width = width + 'px';
@@ -74,6 +83,28 @@ function createSidePanel() {
     resizeHandle.classList.remove('dragging');
     document.removeEventListener('mousemove', resize);
     document.removeEventListener('mouseup', stopResize);
+  }
+
+  function toggleFullscreen() {
+    if (!sidePanel) return;
+
+    isFullscreen = !isFullscreen;
+    
+    if (isFullscreen) {
+      // Store current width before going fullscreen
+      previousWidth = sidePanel.style.width || '500px';
+      sidePanel.classList.add('fullscreen');
+      toggleFullscreenBtn.innerHTML = '<i class="material-icons">fullscreen_exit</i>';
+      resizeHandle.style.display = 'none';
+    } else {
+      sidePanel.classList.remove('fullscreen');
+      toggleFullscreenBtn.innerHTML = '<i class="material-icons">fullscreen</i>';
+      resizeHandle.style.display = 'block';
+      // Restore previous width
+      if (previousWidth) {
+        sidePanel.style.width = previousWidth;
+      }
+    }
   }
   
   resizeHandle.addEventListener('mousedown', startResize);
@@ -94,6 +125,7 @@ function togglePanel() {
   if (isOpen) {
     sidePanel.classList.remove('visible');
     isOpen = false;
+    isFullscreen = false; // Reset fullscreen state when closing
     
     // Wait for animation to complete before removing
     setTimeout(() => {
