@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Panel</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="panel.css">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #f5f5f5;
+    }
+
+    .panel-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100%;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+      background-color: #2d2d2d;
+      color: white;
+    }
+
+    .panel-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .panel-content {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+    }
+
+    .panel-footer {
+      padding: 10px 15px;
+      background-color: #2d2d2d;
+      color: white;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .panel-footer p {
+      margin: 5px 0;
+    }
+
+    .footer-link {
+      color: #4dabf7;
+      text-decoration: none;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel-container">
+    <div class="panel-header">
+      <h3>Side Panel</h3>
+    </div>
+    
+    <div class="panel-content">
+      <h2>Welcome to the Side Panel</h2>
+      <p>This panel works on all pages, including chrome://newtab/!</p>
+      
+      <div style="margin-top: 20px;">
+        <h3>Features</h3>
+        <ul>
+          <li>Works on all pages, including restricted pages</li>
+          <li>Native Chrome side panel integration</li>
+          <li>Consistent user experience</li>
+        </ul>
+      </div>
+      
+      <div style="margin-top: 20px;">
+        <h3>How to Use</h3>
+        <p>Click the extension icon to toggle this panel on any page.</p>
+      </div>
+    </div>
+    
+    <div class="panel-footer">
+      <p>Found a bug? Feature request? <a href="#" class="footer-link">Feedback form</a></p>
+      <p>Made with ❤️ by AI</p>
+    </div>
+  </div>
+
+  <script>
+    // Side panel JavaScript
+    console.log("Side panel loaded");
+    
+    // Function to get the current active tab
+    async function getCurrentTab() {
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      return tabs[0];
+    }
+    
+    // Function to send a message to the content script
+    async function sendMessageToContentScript(message) {
+      try {
+        const tab = await getCurrentTab();
+        if (!tab || !tab.id) {
+          console.error("No active tab found");
+          return { error: "No active tab found" };
+        }
+        
+        // Check if we can access this tab
+        if (tab.url.startsWith("chrome://") || 
+            tab.url.startsWith("edge://") || 
+            tab.url.startsWith("about:")) {
+          console.log("Cannot interact with restricted page:", tab.url);
+          return { 
+            error: "Cannot interact with restricted page",
+            url: tab.url,
+            title: tab.title || "Unknown"
+          };
+        }
+        
+        // Send message to content script
+        return await chrome.tabs.sendMessage(tab.id, message);
+      } catch (error) {
+        console.error("Error sending message to content script:", error);
+        return { error: error.message };
+      }
+    }
+    
+    // Add functionality when the panel loads
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Add event listener for the feedback form link
+      document.querySelector('.footer-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        // Open feedback form or perform other actions
+        console.log("Feedback link clicked");
+      });
+      
+      // Get information about the current page
+      try {
+        const tab = await getCurrentTab();
+        
+        // Display basic tab info even for restricted pages
+        const pageInfoSection = document.createElement('div');
+        pageInfoSection.style.marginTop = '20px';
+        pageInfoSection.innerHTML = `
+          <h3>Current Page</h3>
+          <p><strong>Title:</strong> ${tab.title || "Unknown"}</p>
+          <p><strong>URL:</strong> ${tab.url || "Unknown"}</p>
+        `;
+        
+        document.querySelector('.panel-content').appendChild(pageInfoSection);
+        
+        // If not a restricted page, try to get more info from content script
+        if (!tab.url.startsWith("chrome://") && 
+            !tab.url.startsWith("edge://") && 
+            !tab.url.startsWith("about:")) {
+          
+          // Add a button to interact with the page
+          const interactSection = document.createElement('div');
+          interactSection.style.marginTop = '20px';
+          interactSection.innerHTML = `
+            <h3>Page Interaction</h3>
+            <button id="highlightBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+              Highlight H1 Elements
+            </button>
+          `;
+          
+          document.querySelector('.panel-content').appendChild(interactSection);
+          
+          // Add event listener for the highlight button
+          document.getElementById('highlightBtn').addEventListener('click', async () => {
+            const result = await sendMessageToContentScript({
+              action: "highlight_element",
+              selector: "h1"
+            });
+            
+            console.log("Highlight result:", result);
+          });
+        }
+      } catch (error) {
+        console.error("Error getting tab info:", error);
+      }
+    });
+  </script>
+</body>
+</html>
