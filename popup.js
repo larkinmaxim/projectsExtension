@@ -1,3 +1,4 @@
+// Customer information in this file has been anonymized
 document.addEventListener("DOMContentLoaded", function () {
   // Get the toggle button element
   const toggleButton = document.getElementById("togglePanel");

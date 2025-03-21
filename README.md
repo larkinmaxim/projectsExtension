@@ -1,4 +1,5 @@
 # Side Panel Chrome Extension
+<!-- Customer information in this file has been anonymized -->
 
 A Chrome extension that adds a sliding side panel to any webpage. The panel slides in from the right side of the screen when you click the extension icon.
 
@@ -72,7 +73,7 @@ const footer = document.createElement("div");
 footer.className = "panel-footer";
 footer.innerHTML = `
   <p>Found a bug? Feature request? <a href="#" class="footer-link">Feedback form</a></p>
-  <p>Made with ❤️ by extrastu (v1.0.11)</p>
+  <p>Made with ❤️ by [USER_1] (v1.0.11)</p>
 `;
 ```
 

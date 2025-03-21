@@ -1,4 +1,5 @@
 // Simple background script
+// Customer information in this file has been anonymized
 console.log("Background script loaded");
 
 // Listen for clicks on the extension icon

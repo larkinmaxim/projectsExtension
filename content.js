@@ -1,4 +1,5 @@
 // This creates and manages the sidebar panel
+// Customer information in this file has been anonymized
 let sidePanel = null;
 let isOpen = false;
 let isFullscreen = false;

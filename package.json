@@ -1,4 +1,5 @@
 {
+  "// Note": "Customer information in this file has been anonymized",
   "name": "side-panel-extension",
   "version": "1.0.0",
   "description": "Chrome extension with sliding side panel",
