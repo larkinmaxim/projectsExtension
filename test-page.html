@@ -70,10 +70,20 @@
     let isOpen = false;
     let isFullscreen = false;
     let previousWidth = null; // Store previous width for restoring from fullscreen
+    let isAnimating = false; // Track animation state
+
+    // Helper function to log all panel states
+    function logPanelState(action) {
+      console.log(`${action} - Panel States:`, {
+        sidePanel: sidePanel ? 'exists' : 'null',
+        isOpen,
+        isFullscreen,
+        previousWidth,
+        isAnimating
+      });
+    }
 
     function createSidePanel() {
-      if (sidePanel) return;
-      
       // Create the main panel container
       sidePanel = document.createElement('div');
       sidePanel.className = 'sliding-panel';
@@ -155,15 +165,10 @@
       function toggleFullscreen() {
         if (!sidePanel) return;
 
-        isFullscreen = !isFullscreen;
+        logPanelState('Before fullscreen toggle');
         
         if (isFullscreen) {
-          // Store current width before going fullscreen
-          previousWidth = sidePanel.style.width || '500px';
-          sidePanel.classList.add('fullscreen');
-          toggleFullscreenBtn.innerHTML = '<i class="material-icons">fullscreen_exit</i>';
-          resizeHandle.style.display = 'none';
-        } else {
+          // Exit fullscreen
           sidePanel.classList.remove('fullscreen');
           toggleFullscreenBtn.innerHTML = '<i class="material-icons">fullscreen</i>';
           resizeHandle.style.display = 'block';
@@ -171,7 +176,18 @@
           if (previousWidth) {
             sidePanel.style.width = previousWidth;
           }
+          isFullscreen = false;
+          previousWidth = null;
+        } else {
+          // Enter fullscreen
+          previousWidth = sidePanel.style.width || '500px';
+          sidePanel.classList.add('fullscreen');
+          toggleFullscreenBtn.innerHTML = '<i class="material-icons">fullscreen_exit</i>';
+          resizeHandle.style.display = 'none';
+          isFullscreen = true;
         }
+
+        logPanelState('After fullscreen toggle');
       }
       
       resizeHandle.addEventListener('mousedown', startResize);
@@ -182,28 +198,65 @@
       }, 10);
     }
 
+    let removeTimeout = null;
+
     function togglePanel() {
-      if (!sidePanel) {
-        createSidePanel();
-        isOpen = true;
+      logPanelState('Toggle panel called');
+
+      // If animation is in progress, ignore the toggle
+      if (isAnimating) {
+        console.log('Animation in progress, ignoring toggle');
         return;
       }
-      
+
+      // Clear any pending removal timeout
+      if (removeTimeout) {
+        clearTimeout(removeTimeout);
+        removeTimeout = null;
+      }
+
       if (isOpen) {
+        isAnimating = true;
         sidePanel.classList.remove('visible');
-        isOpen = false;
-        isFullscreen = false; // Reset fullscreen state when closing
         
-        // Wait for animation to complete before removing
-        setTimeout(() => {
-          if (!isOpen && sidePanel && sidePanel.parentNode) {
+        // Reset all states after animation starts
+        isOpen = false;
+        isFullscreen = false;
+        previousWidth = null;
+
+        logPanelState('Panel closing started');
+
+        // Remove panel after animation
+        removeTimeout = setTimeout(() => {
+          if (sidePanel && sidePanel.parentNode) {
             sidePanel.parentNode.removeChild(sidePanel);
             sidePanel = null;
           }
+          isAnimating = false;
+          logPanelState('Panel closing completed');
         }, 300); // Match transition duration
       } else {
+        isAnimating = true;
+
+        // Ensure clean state
+        if (sidePanel && sidePanel.parentNode) {
+          sidePanel.parentNode.removeChild(sidePanel);
+          sidePanel = null;
+        }
+
+        // Reset all states before creating new panel
+        isFullscreen = false;
+        previousWidth = null;
         createSidePanel();
         isOpen = true;
+
+        logPanelState('Panel opening started');
+
+        // Reset animation state after panel is fully visible (matching CSS transition duration)
+        setTimeout(() => {
+          isAnimating = false;
+          logPanelState('Panel opening completed');
+        }, 300);
       }
     }
 
