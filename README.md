@@ -7,11 +7,10 @@ A Chrome extension that adds a sliding side panel to any webpage. The panel slid
 - Dark-themed sliding panel that appears on any webpage
 - Resizable panel width (drag the left edge to adjust)
 - Toggle by clicking the extension icon
-- URL input with action buttons
-- Shortcuts section
-- Recent sites section
+- Fullscreen toggle button to expand the panel to full width
 - Smooth sliding animation
 - Clean, modern design with Material Icons
+- Minimalist header with toggle and close buttons
 
 ## Installation
 
@@ -21,49 +20,13 @@ A Chrome extension that adds a sliding side panel to any webpage. The panel slid
 4. Click "Load unpacked" and select the directory containing this extension
 5. The extension should now be installed and visible in your Chrome toolbar
 
-## Creating Icon Files
-
-Before loading the extension, you need to create PNG icon files. You have two options:
-
-### Option 1: Using the HTML Files
-
-1. Open each of the HTML files in the `images` directory in a web browser:
-   - `images/icon16.html`
-   - `images/icon48.html`
-   - `images/icon128.html`
-2. Right-click on each icon and select "Save image as..."
-3. Save each image with its corresponding name (icon16.png, icon48.png, icon128.png) in the `images` directory
-4. Delete the HTML files after creating the PNG files
-
-### Option 2: Using the Generator Script
-
-If you have Node.js installed, you can use the included script to generate the icons automatically:
-
-1. Install the required dependencies:
-   ```
-   npm install
-   ```
-   Or install just the canvas dependency:
-   ```
-   npm install canvas
-   ```
-2. Run the generator script:
-   ```
-   npm run generate-icons
-   ```
-   Or run it directly:
-   ```
-   node generate-icons.js
-   ```
-3. The script will create all three icon files in the `images` directory
 
 ## Usage
 
 1. Click on the extension icon in the Chrome toolbar to toggle the side panel
-2. Enter URLs in the input field at the top
-3. Use the shortcuts section for quick access to frequently visited sites
-4. View recently visited sites in the recent sites section
-5. Close the panel by clicking the × button in the panel header
+2. Resize the panel by dragging the left edge
+3. Toggle fullscreen mode by clicking the fullscreen button in the header
+4. Close the panel by clicking the × button in the panel header
 
 ## Customization
 
@@ -74,47 +37,46 @@ You can customize the extension by modifying the following files:
 
 ### Changing Panel Content
 
-To change the content of the sliding panel, edit the HTML in the `content.js` file. Look for the sections where different parts of the panel are defined:
+To change the content of the sliding panel, edit the `content.js` file. The panel is created with the following structure:
 
 ```javascript
-// URL input section
-urlInput.innerHTML = `
-  <div class="input-with-icon">
-    <input type="text" placeholder="Please enter the url" class="url-input">
-    <div class="input-actions">
-      <button class="action-btn"><i class="material-icons">file_upload</i></button>
-      <button class="action-btn"><i class="material-icons">bookmark</i></button>
-      <button class="action-btn"><i class="material-icons">refresh</i></button>
-    </div>
-  </div>
-`;
+// Create the main panel container
+sidePanel = document.createElement("div");
+sidePanel.className = "sliding-panel";
 
-// Shortcuts section
-shortcutSection.innerHTML = `
-  <h3>ShortCut</h3>
-  <div class="shortcuts-container">
-    <div class="shortcut-item">
-      <span>google.com</span>
-    </div>
-    <div class="shortcut-item add-shortcut">
-      <i class="material-icons">add</i>
-      <span>Add ShortCut</span>
-    </div>
-  </div>
-`;
+// Create resize handle
+const resizeHandle = document.createElement("div");
+resizeHandle.className = "panel-resize-handle";
 
-// Recent sites section
-recentSection.innerHTML = `
-  <h3>Recent Sites</h3>
-  <div class="recent-sites">
-    <div class="site-item">
-      <img src="https://www.google.com/favicon.ico" alt="OpenAI">
-      <span>OpenAI</span>
-    </div>
-    <!-- More sites... -->
-  </div>
+// Create header with buttons
+const header = document.createElement("div");
+header.className = "panel-header";
+
+const title = document.createElement("h3");
+title.textContent = ""; // Empty title
+
+const toggleFullscreenBtn = document.createElement("button");
+toggleFullscreenBtn.innerHTML = '<i class="material-icons">fullscreen</i>';
+toggleFullscreenBtn.className = "panel-toggle-btn";
+
+const closeBtn = document.createElement("button");
+closeBtn.innerHTML = "&times;";
+closeBtn.className = "panel-close-btn";
+
+// Create content container
+const content = document.createElement("div");
+content.className = "panel-content";
+
+// Create footer
+const footer = document.createElement("div");
+footer.className = "panel-footer";
+footer.innerHTML = `
+  <p>Found a bug? Feature request? <a href="#" class="footer-link">Feedback form</a></p>
+  <p>Made with ❤️ by extrastu (v1.0.11)</p>
 `;
 ```
+
+You can modify this structure to add your own content to the panel.
 
 ### Changing Panel Appearance
 
@@ -122,12 +84,22 @@ To modify the appearance of the sliding panel, edit the `styles.css` file. You c
 
 ### Adjusting Panel Size Limits
 
-The panel is resizable by dragging the left edge. You can adjust the minimum and maximum width limits by modifying these values in the `styles.css` file:
+The panel is resizable by dragging the left edge. You can adjust the minimum and maximum width limits by modifying these values in the `panel.css` and `styles.css` files:
 
+In `panel.css`:
+```css
+.sliding-panel {
+  /* ... other styles ... */
+  width: 500px;      /* Default width */
+  /* ... other styles ... */
+}
+```
+
+In `styles.css`:
 ```css
 .extension-side-panel {
   /* ... other styles ... */
-  width: 350px;      /* Default width */
+  width: 800px;      /* Default width */
   min-width: 250px;  /* Minimum width */
   max-width: 1200px; /* Maximum width */
   /* ... other styles ... */
@@ -138,7 +110,7 @@ You can also adjust the resize behavior in the `content.js` file by modifying th
 
 ```javascript
 function resize(e) {
-  if (sidePanel) {
+  if (sidePanel && !isFullscreen) {
     const width = startWidth - (e.clientX - startX);
     if (width >= 250 && width <= 1200) {  // Min and max width limits
       sidePanel.style.width = width + 'px';
@@ -153,13 +125,11 @@ You can test the sliding panel functionality without loading it as a Chrome exte
 
 ## Tailwind CSS Integration
 
-This project includes examples of how to use Tailwind CSS with the sliding panel extension:
+The test page (`test-page.html`) uses Tailwind CSS for styling. You can leverage Tailwind CSS in your own implementation by including the CDN link in your HTML:
 
-### Tailwind Documentation and Examples
-
-- `tailwind-integration.md`: Detailed documentation on how to integrate Tailwind CSS with the extension
-- `tailwind-panel-example.js`: Example implementation of the panel using Tailwind CSS classes
-- `tailwind-test.html`: Test page demonstrating the Tailwind CSS implementation
+```html
+<link href="https://cdn.tailwindcss.com" rel="stylesheet">
+```
 
 ### Benefits of Using Tailwind CSS
 
@@ -168,8 +138,6 @@ This project includes examples of how to use Tailwind CSS with the sliding panel
 - Faster development
 - Easier to maintain
 - Highly customizable
-
-To test the Tailwind implementation, open `tailwind-test.html` in your browser.
 
 ## License
 
