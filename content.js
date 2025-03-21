@@ -46,7 +46,7 @@ function createSidePanel() {
   footer.className = "panel-footer";
   footer.innerHTML = `
     <p>Found a bug? Feature request? <a href="#" class="footer-link">Feedback form</a></p>
-    <p>Made with ❤️ by extrastu (v1.0.11)</p>
+    <p>Made with ❤️ by AI</p>
   `;
 
   // Assemble the panel

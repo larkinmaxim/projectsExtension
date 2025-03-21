@@ -30,15 +30,16 @@
 .panel-header {
   display: flex;
   align-items: center;
-  padding: 15px;
+  padding: 7px; /* Reduced from 15px to 7px (2x smaller) */
   background-color: #1a1a1a;
   color: white;
   border-bottom: 1px solid #404040;
+  height: 30px; /* Added explicit height */
 }
 
 .panel-header h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 14px; /* Reduced from 18px */
   flex-grow: 1; /* Allow title to take up available space */
 }
 
@@ -56,7 +57,7 @@
 }
 
 .panel-close-btn {
-  font-size: 24px;
+  font-size: 18px; /* Reduced from 24px */
 }
 
 .panel-toggle-btn {
@@ -64,7 +65,7 @@
 }
 
 .panel-toggle-btn .material-icons {
-  font-size: 20px;
+  font-size: 16px; /* Reduced from 20px */
 }
 
 .panel-close-btn:hover,
