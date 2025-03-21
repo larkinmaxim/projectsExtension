@@ -92,6 +92,8 @@ function createSidePanel() {
     if (isFullscreen) {
       // Store current width before going fullscreen
       previousWidth = sidePanel.style.width || "500px";
+      // Remove the inline width style to allow CSS to control width in fullscreen
+      sidePanel.style.width = "";
       sidePanel.classList.add("fullscreen");
       toggleFullscreenBtn.innerHTML =
         '<i class="material-icons">fullscreen_exit</i>';
