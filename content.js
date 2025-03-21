@@ -20,7 +20,7 @@ function createSidePanel() {
   header.className = "panel-header";
 
   const title = document.createElement("h3");
-  title.textContent = "ShortCut";
+  title.textContent = ""; // Removed "ShortCut" text
 
   const toggleFullscreenBtn = document.createElement("button");
   toggleFullscreenBtn.innerHTML = '<i class="material-icons">fullscreen</i>';
@@ -32,6 +32,7 @@ function createSidePanel() {
   closeBtn.className = "panel-close-btn";
   closeBtn.addEventListener("click", togglePanel);
 
+  // Position title on the left, toggle and close buttons on the right
   header.appendChild(title);
   header.appendChild(toggleFullscreenBtn);
   header.appendChild(closeBtn);

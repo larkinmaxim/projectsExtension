@@ -29,7 +29,6 @@
 /* Panel header */
 .panel-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 15px;
   background-color: #1a1a1a;
@@ -40,6 +39,7 @@
 .panel-header h3 {
   margin: 0;
   font-size: 18px;
+  flex-grow: 1; /* Allow title to take up available space */
 }
 
 /* Panel buttons */
