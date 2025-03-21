@@ -8,7 +8,7 @@ let isAnimating = false; // Track animation state
 function createSidePanel() {
   // Create the main panel container
   sidePanel = document.createElement("div");
-  sidePanel.className = "sliding-panel";
+  sidePanel.className = "extension-side-panel";
 
   // Create resize handle
   const resizeHandle = document.createElement("div");
@@ -121,7 +121,8 @@ function createSidePanel() {
 
 let removeTimeout = null;
 
-function togglePanel() {
+// Make togglePanel function available in the global scope
+window.togglePanel = function () {
   console.log("Toggle panel called. Current state:", {
     isOpen,
     isFullscreen,
@@ -199,13 +200,29 @@ function togglePanel() {
       });
     }, 10);
   }
-}
+};
 
 // Listen for messages from the background script
-chrome.runtime.onMessage.addListener((message) => {
-  console.log("Message received:", message);
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log("Content script received message:", message, "from", sender);
+
   if (message.action === "toggle_panel") {
-    console.log("Toggle panel message received");
+    console.log("Toggle panel message received, calling togglePanel()");
     togglePanel();
+    // Send a response back to confirm receipt
+    sendResponse({ status: "Panel toggled" });
+    return true; // Indicates we'll send a response asynchronously
+  } else {
+    console.warn("Unknown action received:", message.action);
+    sendResponse({ status: "Unknown action" });
   }
 });
+
+// Listen for the custom toggle_panel_event
+document.addEventListener("toggle_panel_event", () => {
+  console.log("Custom toggle_panel_event received");
+  togglePanel();
+});
+
+// Log that content script has loaded
+console.log("Content script loaded on page:", window.location.href);

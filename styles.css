@@ -39,7 +39,7 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.extension-side-panel.open {
+.extension-side-panel.visible {
   right: 0;
 }
 

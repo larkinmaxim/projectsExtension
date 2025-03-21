@@ -1,5 +1,5 @@
 /* Sliding Panel Styles */
-.sliding-panel {
+.extension-side-panel {
   position: fixed;
   top: 0;
   right: -500px; /* Start off-screen */
@@ -15,12 +15,12 @@
 }
 
 /* Visible state */
-.sliding-panel.visible {
+.extension-side-panel.visible {
   right: 0;
 }
 
 /* Fullscreen mode */
-.sliding-panel.fullscreen {
+.extension-side-panel.fullscreen {
   right: 0;
   width: 100vw;
   max-width: 100vw;
